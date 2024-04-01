@@ -13,6 +13,10 @@ const i18n = createI18n({
   fallbackLocale: 'en-US',
   legacy: false,
   allowComposition: true,
+  silentTranslationWarn: true,
+  missingWarn: false,
+  silentFallbackWarn: true,
+  fallbackWarn: false,
   messages: {
     'en-US': en,
     'zh-CN': cn,

@@ -4,6 +4,7 @@ import localeLogin from '@/views/login/locale/en-US';
 import localeWorkplace from '@/views/dashboard/workplace/locale/en-US';
 
 import localeSettings from './en-US/settings';
+import localeLabel from './zh-CN/label'
 
 export default {
   'menu.dashboard': 'Dashboard',
@@ -25,4 +26,5 @@ export default {
   ...localeMessageBox,
   ...localeLogin,
   ...localeWorkplace,
+  ...localeLabel
 };

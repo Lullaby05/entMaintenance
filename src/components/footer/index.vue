@@ -1,5 +1,5 @@
 <template>
-  <a-layout-footer class="footer">Arco Pro</a-layout-footer>
+  <a-layout-footer class="footer">安全智能预警工具（运维端）</a-layout-footer>
 </template>
 
 <script lang="ts" setup></script>

@@ -5,9 +5,9 @@
         alt="logo"
         src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/dfdba5317c0c20ce20e64fac803d52bc.svg~tplv-49unhts6dw-image.image"
       />
-      <div class="logo-text">Arco Design Pro</div>
+      <div class="logo-text">安全智能预警工具（运维端）</div>
     </div>
-    <LoginBanner />
+    <!-- <LoginBanner /> -->
     <div class="content">
       <div class="content-inner">
         <LoginForm />
@@ -59,6 +59,9 @@
     z-index: 1;
     display: inline-flex;
     align-items: center;
+    .logo-text {
+      color: #333333;
+    }
 
     &-text {
       margin-right: 4px;

@@ -1,0 +1,23 @@
+export default {
+  label_menuType: '菜单类型',
+  label_firstMenu: '一级菜单',
+  label_subMenu: '子菜单',
+  label_creatorBtn: '操作按钮',
+  label_parentMenu: '上级菜单',
+  label_btnName: '按钮名称',
+  label_btnPath: '按钮路径',
+  label_menuPath: '菜单路径',
+  label_isCache: '页面是否缓存',
+  label_menuIcon: '菜单图标',
+  label_componentPath: '组件路径',
+  label_compoentName: '组件名称',
+  label_languageKey: '匹配语言包的值',
+  label_redirectUrl: '重定向地址',
+  label_isHiddenSider: '是否在侧边栏隐藏',
+  label_isNode: '是否节点',
+  label_descrition: '描述',
+  label_serialNo: '序号',
+  label_menuName: '菜单名称',
+  label_Y: '是',
+  label_N: '否'
+}

@@ -2,7 +2,7 @@ type TargetContext = '_self' | '_parent' | '_blank' | '_top';
 
 export const openWindow = (
   url: string,
-  opts?: { target?: TargetContext; [key: string]: any }
+  opts?: { target?: TargetContext;[key: string]: any }
 ) => {
   const { target = '_blank', ...others } = opts || {};
   window.open(
@@ -22,4 +22,8 @@ export const regexUrl = new RegExp(
   'i'
 );
 
+export const phoneRegExp =
+  /^$|^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/;
+
+export const faxRegExp = /^$|^(0\d{2,3}\-)?([2-9]\d{7,8})+(\-\d{0,6})?$/;
 export default null;

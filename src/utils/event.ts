@@ -25,3 +25,11 @@ export function removeEventListen(
     target.removeEventListener(event, handler, capture);
   }
 }
+
+export function handleOnKeyup(eventName: string, callback?: () => void) {
+  document.onkeyup = (e) => {
+    if (e.key === eventName) {
+      callback && callback();
+    }
+  };
+}
