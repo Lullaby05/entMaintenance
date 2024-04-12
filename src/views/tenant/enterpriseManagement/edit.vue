@@ -215,6 +215,7 @@
                 <a-input
                   v-model="formData.contacts"
                   placeholder="请输入联系人"
+                  allow-clear
                 ></a-input>
               </a-form-item>
               <a-form-item field="contactsTel" label="手机号码">
@@ -256,6 +257,7 @@
                   v-model:model-value="formData.planFlag"
                   placeholder="请选择是否具备预案及备案"
                   :fallback-option="false"
+                  allow-clear
                 >
                   <a-option :value="1">是</a-option>
                   <a-option :value="0">否</a-option>
@@ -269,6 +271,7 @@
                   v-model:model-value="formData.threeSimultaneousFlag"
                   :fallback-option="false"
                   placeholder="请选择是否具备三同时资料"
+                  allow-clear
                 >
                   <a-option :value="1">是</a-option>
                   <a-option :value="0">否</a-option>
@@ -282,6 +285,7 @@
                   v-model:model-value="formData.safetyProductionFlag"
                   :fallback-option="false"
                   placeholder="请选择是否进行安全生产标准化建设"
+                  allow-clear
                 >
                   <a-option :value="1">是</a-option>
                   <a-option :value="0">否</a-option>
@@ -370,11 +374,11 @@
             :label-col-props="{ span: 5 }"
             :wrapper-col-props="{ span: 19 }"
           >
-            <a-form-item field="username" label="登录账号" show-colon>
+            <a-form-item field="email" label="登录邮箱" show-colon>
               <a-input
-                v-model="accountFormData.username"
+                v-model="accountFormData.email"
                 allow-clear
-                placeholder="请输入登录账号"
+                placeholder="请输入登录邮箱"
               ></a-input>
             </a-form-item>
             <a-form-item field="password" label="登录密码" show-colon>
@@ -688,8 +692,14 @@
     ],
     socialcreditCode: [
       {
-        match: /^[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}$/,
-        message: '请输入正确的统一社会信用代码',
+        validator: (value: string, callback: Function) => {
+          const regexp = /^[0-9A-HJ-NPQRTUWXY]{2}\d{6}[0-9A-HJ-NPQRTUWXY]{10}$/;
+          if (value && !regexp.test(value)) {
+            callback('请输入正确的统一社会信用代码');
+          } else {
+            callback();
+          }
+        },
       },
     ],
     establishmentDate: [
@@ -707,28 +717,77 @@
     companyArea: [{ maxLength: 60, message: '不能超过60字符' }],
     enterpriseAddress: [{ maxLength: 60, message: '不能超过60字符' }],
     belongGroup: [{ maxLength: 25, message: '不能超过25字符' }],
-    safeMainPersonTel: [{ match: phoneRegExp, message: '请输入正确的手机号' }],
+    safeMainPerson: [{ maxLength: 25, message: '不能超过25字符' }],
+    safeMainPersonTel: [
+      {
+        validator: (value: string, callback: Function) => {
+          if (value && !phoneRegExp.test(value)) {
+            callback('请输入正确的手机号');
+          } else {
+            callback();
+          }
+        },
+      },
+    ],
     position: [{ maxLength: 20, message: '不能超过20字符' }],
-    contactsTel: [{ match: phoneRegExp, message: '请输入正确的手机号' }],
     contactsPosition: [{ maxLength: 20, message: '不能超过20字符' }],
     officialUrl: [{ maxLength: 100, message: '不能超过100字符' }],
     fax: [
       {
-        match: faxRegExp,
-        message: '请输入正确的传真号码：区号-电话号码-分机号，分机号可以没有',
+        validator: (value: string, callback: Function) => {
+          if (value && !faxRegExp.test(value)) {
+            callback(
+              '请输入正确的传真号码：区号-电话号码-分机号，分机号可以没有'
+            );
+          } else {
+            callback();
+          }
+        },
       },
     ],
     //  安全信息
     safeRegulator: [{ maxLength: 40, message: '不能超过40字符' }],
     safeRegulatorPerson: [{ maxLength: 25, message: '不能超过25字符' }],
-    safeRegulatorTel: [{ match: phoneRegExp, message: '请输入正确的手机号' }],
+    safeRegulatorTel: [
+      {
+        validator: (value: string, callback: Function) => {
+          if (value && !phoneRegExp.test(value)) {
+            callback('请输入正确的手机号');
+          } else {
+            callback();
+          }
+        },
+      },
+    ],
     communityInspector: [{ maxLength: 25, message: '不能超过25字符' }],
     communityInspectorTel: [
-      { match: phoneRegExp, message: '请输入正确的手机号' },
+      {
+        validator: (value: string, callback: Function) => {
+          if (value && !phoneRegExp.test(value)) {
+            callback('请输入正确的手机号');
+          } else {
+            callback();
+          }
+        },
+      },
     ],
     // 联系方式
-    safeMainPerson: [{ maxLength: 25, message: '不能超过25字符' }],
-    contacts: [{ maxLength: 25, message: '不能超过25字符' }],
+    contacts: [
+      { required: true, message: '请输入联系人' },
+      { maxLength: 25, message: '不能超过25字符' },
+    ],
+    contactsTel: [
+      { required: true, message: '请输入手机号码' },
+      {
+        validator: (value: string, callback: Function) => {
+          if (value && !phoneRegExp.test(value)) {
+            callback('请输入正确的手机号');
+          } else {
+            callback();
+          }
+        },
+      },
+    ],
   });
 
   // 附件上传
@@ -885,15 +944,16 @@
     status: 0,
   });
   const accountFormRules = {
-    username: [
+    email: [
       {
         required: true,
         validator: (value: any, callback: Function) => {
-          const regexp = /^[\u4E00-\u9FA5a-zA-Z0-9_]{2,25}$/;
-          if (!value) {
-            callback('请输入登录账号');
-          } else if (!regexp.test(value)) {
-            callback('登录账号仅由英文、数字、中文及下划线组成，2-25字符');
+          const emailRegexp =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          if(!value){
+            callback('请输入邮箱');
+          }else if (!emailRegexp.test(value)) {
+            callback('请输入正确的邮箱');
           }
           callback();
         },
@@ -1045,7 +1105,7 @@
     if (result) return;
     await changePasswordApi({
       entId: id,
-      username: accountFormData.value.username,
+      email: accountFormData.value.email,
       newPassword: passwordForm.value.newPassword,
     });
     Message.success('修改成功');

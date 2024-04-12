@@ -51,7 +51,6 @@ export default mergeConfig(
       rollupOptions: {
         input: {
           main: resolve(__dirname, '../index.html'),
-          tabs: resolve(__dirname, '../tabs.html'),
         },
         output: {
           manualChunks: {

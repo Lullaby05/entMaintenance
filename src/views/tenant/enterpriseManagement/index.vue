@@ -302,7 +302,9 @@
       }
       return {
         ...item,
-        expireTime: formatDate(item.expireTime, 'yyyy-MM-DD'),
+        expireTime: item.expireTime
+          ? formatDate(item.expireTime, 'yyyy-MM-DD')
+          : '',
         expireDesc,
       };
     });

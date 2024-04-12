@@ -183,7 +183,7 @@
   });
   const pcExpandKeys = ref<string[]>([]);
   const wxExpandKeys = ref<string[]>([]);
-    const allDataMap = ref<any>(new Map());
+  const allDataMap = ref<any>(new Map());
   const treeData = ref([]);
   const columns: TableColumnData[] = [
     { title: '权限名称', dataIndex: 'name', width: 200 },
@@ -251,76 +251,98 @@
     _rowKey: string | number,
     record: TableData
   ) => {
-    // 如果勾选的是下面的节点，就要找到同级下面的查看节点一起勾选上
-    const siblings = findFirstSiblingInTree(
-      treeData.value,
-      record.id,
-      null,
-      null,
-      rowKeys
-    );
-    if (!siblings) return;
     const obj = {
       2: pcPermissionList,
       3: wxPermissionList,
     };
-    // 目标节点数组中除查看外含有勾选的,则提示无法删除，否则允许删除该查看节点
-    const flag = siblings
-      .filter((ele: any) => ele.name !== '查看')
-      .some((ele: any) =>
-        obj[searchForm.value.platform as 2 | 3].value.includes(ele.id)
-      );
-    // 如果勾选的是查看但是除查看外还有其他的权限，则进行提示
-    const msgFlag =
-      record.name === '查看' &&
-      obj[searchForm.value.platform as 2 | 3].value.includes(record.id);
-    setTimeout(() => {
-      if (flag) {
-        if (msgFlag) {
-          Message.warning('如果有其他节点存在则查看必选');
-        }
-        obj[searchForm.value.platform as 2 | 3].value.push(siblings[0].id);
-      }
-    }, 0);
-  };
+    // listData是改变前的数据
+    // record是当前点击的节点
+    // rowKeys是改变后的数据
+    const listData = obj[searchForm.value.platform as 2 | 3];
+    const siblings = findNodeById(record.parentId, treeData.value); // 同级的所有节点
 
-  function findFirstSiblingInTree(
-    treeData: any[],
-    targetId: string,
-    _parentId: string | null,
-    parentNode: any,
-    rowKeys: (string | number)[]
-  ) {
-    for (let node of treeData) {
-      if (node.id === targetId) {
-        // 找到了目标节点
-        if (parentNode && parentNode.children) {
-          // 从目标节点开始向后遍历其同级节点
-          const siblings = parentNode.children;
-          const flag = siblings.find((item: any) => item.name === '查看');
-          if (flag) {
-            return siblings;
-          }
-          return null; // 没有找到同级节点
-        } else {
-          return null;
-        }
-      } else if (Array.isArray(node.children)) {
-        const foundSibling: any = findFirstSiblingInTree(
-          node.children,
-          targetId,
-          node.id,
-          node,
-          rowKeys
-        );
-        if (foundSibling) {
-          return foundSibling; // 在子树中找到了目标节点的同级节点
-        }
+    // 如果是查看节点则需要判断当前同级节点是否有其他节点被选中（包括同级节点中的子节点），有则不可取消选中
+    function judgePeerNodeSelected() {
+      const siblingNodeSelected = hasOtherNodeSelected(
+        siblings.children.slice(1),
+        rowKeys
+      );
+      return siblingNodeSelected;
+    }
+    if (record.name === '查看' && !rowKeys.includes(record.id)) {
+      if (judgePeerNodeSelected()) {
+        Message.warning('该角色拥有此模块其他操作权限，无法取消查看权限');
+        setTimeout(() => {
+          listData.value.push(record.id);
+        }, 0);
       }
     }
 
-    return null; // 没有在当前层级找到目标节点及其同级节点
-  }
+    // 如果选中的是其他节点
+    function handleOtherNodeSelected(record: any, siblings: any) {
+      listData.value.push(record.id);
+      if (record.name !== '查看' && listData.value.includes(record.id)) {
+        if (siblings && siblings.children[0].name === '查看') {
+          if (!rowKeys.includes(siblings.children[0].id)) {
+            setTimeout(() => {
+              listData.value.push(siblings.children[0].id);
+            });
+          }
+        }
+        setTimeout(() => {
+          if (record.children && record.children.length) {
+            listData.value = listData.value.filter((id) => id !== record.id);
+          }
+        }, 0);
+      }
+    }
+    // 1.如果选中的是同级节点，则把该节点的查看节点一起选中
+    handleOtherNodeSelected(record, siblings);
+
+    // 2.如果选中的是子节点，则把该子节点的查看节点和父级所有的查看节点一起选中
+    function handleParentSelected(record: any) {
+      if (!record.parentId) return;
+      const parent = findNodeById(record.parentId, treeData.value);
+      if (!parent || (parent && !parent.parentId)) return;
+      const siblings = findNodeById(parent.parentId, treeData.value);
+      handleOtherNodeSelected(parent, siblings);
+      handleParentSelected(parent);
+    }
+    if (rowKeys.includes(record.id)) {
+      handleParentSelected(record);
+    }
+
+    // 通过id查找到对应节点
+    function findNodeById(id: string | number, tree: any[]): any {
+      for (let node of tree) {
+        if (node.id === id) {
+          return node;
+        }
+        if (node.children) {
+          let result = findNodeById(id, node.children);
+          if (result) {
+            return result;
+          }
+        }
+      }
+      return null;
+    }
+    // 一个数组除了name为查看的节点外，其他节点是否有选中（包括子节点的选中）
+    function hasOtherNodeSelected(nodes: any[], rowKeys: (string | number)[]) {
+      for (let node of nodes) {
+        if (rowKeys.includes(node.id)) {
+          return true;
+        }
+        if (node.children) {
+          let result = hasOtherNodeSelected(node.children, rowKeys);
+          if (result) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+  };
 
   defineExpose({
     getTotalSubTree,

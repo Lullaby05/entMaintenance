@@ -22,8 +22,8 @@
         </div>
         <div class="second" v-if="tabInfo === '2'">
           <div>
-            <div class="label">登录账号：</div>
-            <div class="value">{{ accountFormData.username }}</div>
+            <div class="label">登录邮箱：</div>
+            <div class="value">{{ accountFormData.email }}</div>
           </div>
           <div>
             <div class="label">登录密码：</div>
@@ -53,7 +53,11 @@
           </div>
           <div>
             <div class="label">账号类型：</div>
-            <div class="value">{{ accountFormData.accountTypeName }}</div>
+            <div class="value">{{
+              accountTypeList.find(
+                (ele: any) => ele.value === accountFormData.accountType
+              )?.label
+            }}</div>
           </div>
           <div>
             <div class="label">账号过期时间：</div>
@@ -111,8 +115,8 @@
   const passwordVisible = ref(true);
   const copy = () => {
     navigator.clipboard.writeText(
-      `企业名称：${formData.value.companyName}\n登录账号：${
-        accountFormData.value.username || ''
+      `企业名称：${formData.value.companyName}\n登录邮箱：${
+        accountFormData.value.email || ''
       }\n登录密码：${accountFormData.value.password || ''}`
     );
     Message.success('企业账号信息已复制至剪贴板');
@@ -123,6 +127,12 @@
 
   const { id } = route.query;
   const permissionList = ref<any>({});
+
+  const accountTypeList = [
+    { label: '客户正式账号', value: 0 },
+    { label: '客户试用账号', value: 1 },
+    { label: '演示账号', value: 2 },
+  ];
 
   const getDetailData = async () => {
     const { data } = await companyDetailByIdAPI(id as string);

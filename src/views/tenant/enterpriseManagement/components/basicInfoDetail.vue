@@ -6,7 +6,7 @@
         <div class="title-box">
           <div class="title">{{ data.companyName }}</div>
           <div class="code">{{
-            '统一社会信用代码：' + data?.socialcreditCode
+            '统一社会信用代码：' + (data?.socialcreditCode || '')
           }}</div>
 
           <div class="preview" v-if="data.businessLicenseList" @click="preview"
