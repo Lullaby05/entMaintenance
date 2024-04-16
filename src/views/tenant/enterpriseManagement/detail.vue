@@ -42,7 +42,12 @@
                 style="cursor: pointer; font-size: 20px"
                 @click="passwordVisible = !passwordVisible"
               />
-              <a-button type="primary" size="mini" @click="copy"
+              <a-button
+                class="copy-btn"
+                data-clipboard-target="#copy-text"
+                type="primary"
+                size="mini"
+                @click="copy"
                 >复制企业账号信息</a-button
               >
             </div>
@@ -65,7 +70,9 @@
           </div>
           <div>
             <div class="label">帐号状态：</div>
-            <div class="value">{{ accountFormData.statusName }}</div>
+            <div class="value">{{
+              accountFormData.status == 0 ? '启用' : '禁用'
+            }}</div>
           </div>
           <div>
             <div class="label">备注：</div>
@@ -90,6 +97,7 @@
   import permissionConfig from './components/permissionConfig.vue';
   import { companyDetailByIdAPI } from '@/api/enterpriseManage';
   import { Message } from '@arco-design/web-vue';
+  import useClipboard from 'vue-clipboard3';
 
   const router = useRouter();
   const route = useRoute();
@@ -113,13 +121,25 @@
       : password.value;
   });
   const passwordVisible = ref(true);
-  const copy = () => {
-    navigator.clipboard.writeText(
-      `企业名称：${formData.value.companyName}\n登录邮箱：${
-        accountFormData.value.email || ''
-      }\n登录密码：${accountFormData.value.password || ''}`
-    );
-    Message.success('企业账号信息已复制至剪贴板');
+
+  const { toClipboard } = useClipboard();
+  const copy = async () => {
+    try {
+      await toClipboard(
+        `企业名称：${formData.value.companyName}\n登录邮箱：${
+          accountFormData.value.email || ''
+        }\n登录密码：${accountFormData.value.password || ''}`
+      );
+      Message.success('企业账号信息已复制至剪贴板');
+    } catch (e) {
+      console.error(e);
+      console.error('复制失败');
+    }
+    // navigator.clipboard.writeText(
+    //   `企业名称：${formData.value.companyName}\n登录邮箱：${
+    //     accountFormData.value.email || ''
+    //   }\n登录密码：${accountFormData.value.password || ''}`
+    // );
   };
 
   const formData = ref<any>({});

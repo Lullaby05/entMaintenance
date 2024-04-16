@@ -291,20 +291,23 @@
     const { data } = await getEnterpriseList(selectForm.value);
     enterpriseList.value.total = data.total;
     enterpriseList.value.list = data.list.map((item: any) => {
-      const gap = Math.abs(
-        dayjs(item.expireTime).diff(new Date().setHours(23, 59, 59), 'day')
-      );
+      const gap = dayjs(item.expireTime)
+        .startOf('day')
+        .diff(dayjs().startOf('day'), 'day');
       let expireDesc = '';
       if (item.expireStatus === 1) {
-        expireDesc = `(${gap}天后过期)`;
+        expireDesc = gap === 0 ? '(今日到期)' : `(${gap}天后过期)`;
       } else if (item.expireStatus === 2) {
-        expireDesc = `(已过期${gap}天)`;
+        expireDesc = `(已过期${Math.abs(gap)}天)`;
       }
       return {
         ...item,
-        expireTime: item.expireTime
-          ? formatDate(item.expireTime, 'yyyy-MM-DD')
-          : '',
+        expireTime:
+          item.expireTimeType === 0
+            ? ''
+            : item.expireTime
+            ? formatDate(item.expireTime, 'yyyy-MM-DD')
+            : '',
         expireDesc,
       };
     });
@@ -367,12 +370,6 @@
   };
 
   const handleDelete = (record: any) => {
-    if (record.usedQuota > 0) {
-      Message.warning(
-        `该企业下存在${record.usedQuota}个用户，无法删除，若仍要删除，请先移除该企业下的用户`
-      );
-      return;
-    }
     Modal.open({
       title: '提示',
       titleAlign: 'start',
@@ -382,6 +379,12 @@
           info: '删除数据不可恢复，请谨慎操作！',
         }),
       onOk: async () => {
+        if (record.usedQuota > 0) {
+          Message.warning(
+            `该企业下存在${record.usedQuota}个用户，无法删除，若仍要删除，请先移除该企业下的用户`
+          );
+          return;
+        }
         await deleteCompanyApi(record.id);
         Message.success('删除成功');
         getTableList();

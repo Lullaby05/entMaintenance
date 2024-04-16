@@ -362,6 +362,26 @@
                   </a-tooltip>
                 </a-upload>
               </a-form-item>
+              <a-form-item field="qualificationInfo" label="资质信息">
+                <a-upload
+                  v-model:fileList="formData.qualificationInfoList"
+                  :headers="headers"
+                  list-type="picture-card"
+                  :action="UploadPath"
+                  :limit="9"
+                  image-preview
+                  accept="image/*"
+                  @success="uploadQualificationSuccess"
+                  @before-remove="(e:FileItem)=>beforeRemove(e, 'qualificationInfo')"
+                >
+                  <a-tooltip
+                    content="只能上传九张图片，大小不能超过20M。"
+                    position="right"
+                  >
+                    <icon-question-circle-fill class="upload-tip" />
+                  </a-tooltip>
+                </a-upload>
+              </a-form-item>
             </a-row>
           </a-form>
         </div>
@@ -625,6 +645,7 @@
     logoList?: any[];
     businessLicenseList?: any[];
     emergencyList?: any[];
+    qualificationInfoList?: any[];
   }
 
   const formData = ref<formDataType>({
@@ -797,6 +818,27 @@
     }
   };
 
+  const uploadQualificationSuccess = (e: FileItem) => {
+    const { response } = e;
+
+    if (response.code < 200) {
+      formData.value.qualificationInfoList =
+        formData.value.qualificationInfoList?.map((item: any) => {
+          return {
+            ...item,
+            response,
+          };
+        });
+      formData.value.qualificationInfo = formData.value.qualificationInfo
+        ? formData.value.qualificationInfo + ',' + response.data[0].fileName
+        : response.data[0].fileName;
+    } else {
+      Message.error({
+        content: '上传失败，原因为=' + response.msg,
+      });
+    }
+  };
+
   const beforeRemove = (
     file: FileItem,
     attribute: string
@@ -819,6 +861,15 @@
               break;
             case 'business':
               formData.value.business = '';
+              break;
+            case 'qualificationInfo':
+              const fileArr = formData.value.qualificationInfo
+                .toString()
+                .split(',');
+              const delFileThumb = file.url.match(/%2F%2F(.+?)\?/)[1];
+              formData.value.qualificationInfo = fileArr
+                .filter((item: string) => item.split('//')[1] !== delFileThumb)
+                .join(',');
               break;
             default:
               break;

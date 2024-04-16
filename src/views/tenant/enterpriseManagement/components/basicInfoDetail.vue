@@ -239,6 +239,20 @@
         </div>
       </div>
     </a-card>
+    <!-- 资质信息 -->
+    <a-card class="certificate" title="资质信息">
+      <div class="img" v-for="(item, index) in data.qualificationInfoList" :key="index">
+        <a-image-preview-group infinite>
+          <a-image
+            width="100%"
+            height="100%"
+            alt="资质信息"
+            :src="item"
+            fit="contain"
+          />
+        </a-image-preview-group>
+      </div>
+    </a-card>
   </div>
 </template>
 
