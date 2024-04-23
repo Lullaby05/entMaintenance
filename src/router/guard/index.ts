@@ -5,6 +5,10 @@ import setupPermissionGuard from './permission';
 
 function setupPageGuard(router: Router) {
   router.beforeEach(async (to) => {
+    if (to.name === 'Monitor') {
+      window.open('http://localhost:4200/', '_blank');
+      return;
+    }
     // emit route change
     setRouteEmitter(to);
   });

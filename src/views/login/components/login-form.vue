@@ -1,8 +1,8 @@
 <template>
   <div class="login-form-wrapper">
-    <div class="login-form-title">{{ $t('login.form.title') }}</div>
+    <!-- <div class="login-form-title">{{ $t('login.form.title') }}</div>
     <div class="login-form-sub-title">{{ $t('login.form.title') }}</div>
-    <div class="login-form-error-msg">{{ errorMessage }}</div>
+    <div class="login-form-error-msg">{{ errorMessage }}</div> -->
     <a-form
       ref="loginForm"
       :model="userInfo"
@@ -17,6 +17,7 @@
         hide-label
       >
         <a-input
+          autocomplete="new-password"
           v-model="userInfo.username"
           :placeholder="$t('login.form.userName.placeholder')"
         >
@@ -32,6 +33,7 @@
         hide-label
       >
         <a-input-password
+          autocomplete="new-password"
           v-model="userInfo.password"
           :placeholder="$t('login.form.password.placeholder')"
           allow-clear
@@ -46,7 +48,7 @@
           <a-checkbox
             checked="rememberPassword"
             :model-value="loginConfig.rememberPassword"
-            @change="setRememberPassword as any"
+            @change="setRememberPassword"
           >
             {{ $t('login.form.rememberPassword') }}
           </a-checkbox>
@@ -124,15 +126,19 @@
       }
     }
   };
-  const setRememberPassword = (value: boolean) => {
+  const setRememberPassword = (value: boolean): any => {
     loginConfig.value.rememberPassword = value;
   };
 </script>
 
 <style lang="less" scoped>
   .login-form {
+    width: 100%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 0 0 10px 10px;
     &-wrapper {
-      width: 320px;
+      // width: 320px;
     }
 
     &-title {

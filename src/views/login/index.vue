@@ -1,19 +1,28 @@
 <template>
   <div class="container">
-    <div class="logo">
+    <!-- <div class="logo">
       <img
         alt="logo"
         src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/dfdba5317c0c20ce20e64fac803d52bc.svg~tplv-49unhts6dw-image.image"
       />
       <div class="logo-text">安全智能预警工具（运维端）</div>
-    </div>
+    </div> -->
     <!-- <LoginBanner /> -->
-    <div class="content">
-      <div class="content-inner">
-        <LoginForm />
+    <div style="width: 400px">
+      <div class="header">
+        <img
+          src="https://business.api.xkrsecure.com/icon/logo-xkr.png"
+          alt=""
+        />
+        <h1 class="login-title">安全智能预警平台运维端</h1>
       </div>
-      <div class="footer">
+      <div class="content">
+        <div class="content-inner" style="width: 100%">
+          <LoginForm />
+        </div>
+        <!-- <div class="footer">
         <Footer />
+      </div> -->
       </div>
     </div>
   </div>
@@ -28,7 +37,39 @@
 <style lang="less" scoped>
   .container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
+    background-image: url('@/assets/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+
+    .header {
+      background-image: linear-gradient(to left, #428ffb 0%, #385de2 100%);
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      border-radius: 10px 10px 0 0;
+      gap: 20px;
+      width: 100%;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      img {
+        width: 132px;
+        height: 80px;
+        margin: 0 auto;
+      }
+      .login-title {
+        margin-top: 0px;
+        text-align: center;
+        font-size: 24px;
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+    }
 
     .banner {
       width: 550px;
@@ -36,12 +77,12 @@
     }
 
     .content {
-      position: relative;
+      width: 100%;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+      // position: relative;
       display: flex;
-      flex: 1;
       align-items: center;
       justify-content: center;
-      padding-bottom: 40px;
     }
 
     .footer {

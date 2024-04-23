@@ -41,6 +41,9 @@ export default function setupPermissionGuard(router: Router) {
         next();
       } else next(NOT_FOUND);
     } else {
+      if (to.name === 'Monitor') {
+        next(false);
+      }
       // eslint-disable-next-line no-lonely-if
       if (permissionsAllow) next();
       else {

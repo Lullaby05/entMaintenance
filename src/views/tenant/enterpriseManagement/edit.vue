@@ -1083,7 +1083,9 @@
       ...data.account,
       expireTime:
         data.account.expireTimeType === 2
-          ? dayjs(data.account.expireTime).diff(dayjs(), 'day')
+          ? dayjs(data.account.expireTime)
+              .startOf('day')
+              .diff(dayjs().startOf('day'), 'day')
           : data.account.expireTime,
     };
     permissionList.value = data.permissionInfo;
