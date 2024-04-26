@@ -106,7 +106,7 @@
         const res = await userStore.login(values as LoginData);
         if (!res) return;
         const { redirect, ...othersQuery } = router.currentRoute.value.query;
-        router.push({
+        router.replace({
           name: (redirect as string) || 'EnterpriseManage',
           query: {
             ...othersQuery,
